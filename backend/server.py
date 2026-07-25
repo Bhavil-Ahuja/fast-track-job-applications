@@ -65,6 +65,12 @@ def generate_with_ollama(system_prompt, user_prompt):
     return response.message.content
 
 
+@app.route('/', methods=['GET'])
+@limiter.exempt
+def index():
+    """Root endpoint for browser verification."""
+    return jsonify({"message": "Cover Letter AI Backend is running successfully!"})
+
 @app.route('/api/health', methods=['GET'])
 @limiter.exempt
 def health_check():
