@@ -40,8 +40,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   let cleanLetter = '';         // Text stripped of bold markers
   let userApiKey = '';
 
-  const API_URL = 'http://localhost:5000/api/generate';
-  const API_TEST_URL = 'http://localhost:5000/api/test-key';
+  const API_URL = 'https://fast-track-job-applications-production.up.railway.app/api/generate';
+  const API_TEST_URL = 'https://fast-track-job-applications-production.up.railway.app/api/test-key';
 
   // ---- Initialize ----
   await loadCachedResume();
