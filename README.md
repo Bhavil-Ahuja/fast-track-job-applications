@@ -57,9 +57,20 @@ An intelligent, context-aware Chrome Extension that automates the job applicatio
    python server.py
    ```
 
-### 2. Chrome Extension Installation
+### 2. Chrome Extension Installation (Local Testing)
 1. Open Google Chrome and go to `chrome://extensions/`.
 2. Enable **Developer mode** (toggle in the top-right corner).
 3. Click **Load unpacked** (top-left button).
 4. Select the `extension/` directory of this project.
-5. Pins the **Cover Letter AI** extension to your toolbar, navigate to a job application portal (e.g. Ashby, Greenhouse, Lever, Rippling), and start generating cover letters!
+5. Pin the **Cover Letter AI** extension to your toolbar.
+6. Make sure to update the `API_URL` and `API_TEST_URL` inside `extension/popup.js` to point to your live Railway deployment.
+
+### 3. Deploying to the Chrome Web Store
+To publish this extension so anyone can download it from the Chrome Web Store:
+1. Zip the extension folder: `zip -r cover-letter-ai.zip extension/` (Make sure your production API URLs are set in `popup.js` before zipping).
+2. Go to the [Chrome Developer Dashboard](https://chrome.google.com/webstore/devconsole/).
+3. Pay the $5 one-time developer registration fee.
+4. Click **New Item** and upload `cover-letter-ai.zip`.
+5. Fill out the Store Listing (Title, Description, Category).
+6. Under **Privacy**, state that your extension handles user data (resumes) but does not sell it, and all API keys are stored locally on the user's device (`chrome.storage.local`).
+7. Submit for Review (Google typically takes 24 to 72 hours to approve new extensions).
