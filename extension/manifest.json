@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "AI Cover Letter Generator",
+  "name": "CoverCraft AI",
   "version": "1.0",
   "description": "Generate premium cover letters using AI",
   "action": {
@@ -22,6 +22,6 @@
     "scripting"
   ],
   "host_permissions": [
-    "http://localhost:5000/*"
+    "https://fast-track-job-applications-production.up.railway.app/*"
   ]
 }
