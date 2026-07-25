@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cover Letter AI</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+
+    <!-- Header -->
+    <header>
+      <div class="header-title">
+        <svg class="logo-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
+          <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" fill="url(#starGrad)"/>
+          <defs><linearGradient id="starGrad" x1="2" y1="2" x2="22" y2="22"><stop stop-color="#38bdf8"/><stop offset="1" stop-color="#818cf8"/></linearGradient></defs>
+        </svg>
+        <h1>Cover Letter AI</h1>
+      </div>
+    </header>
+
+    <!-- Resume Card -->
+    <div class="section-card" id="resumeCard">
+      <div class="section-label">Resume</div>
+      <div id="resumeEmpty">
+        <input type="file" id="resumeUpload" accept=".pdf" hidden>
+        <label for="resumeUpload" class="upload-zone">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+            <polyline points="17 8 12 3 7 8"/>
+            <line x1="12" y1="3" x2="12" y2="15"/>
+          </svg>
+          <span>Click to upload PDF resume</span>
+        </label>
+      </div>
+      <div id="resumeCached" class="hidden">
+        <div class="resume-info">
+          <span class="resume-dot"></span>
+          <span class="resume-name" id="resumeFileName" title="">Resume loaded</span>
+          <button id="replaceResumeBtn" class="icon-btn" title="Replace resume">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0118.8-4.3M22 12.5a10 10 0 01-18.8 4.2"/>
+            </svg>
+          </button>
+          <button id="clearResumeBtn" class="icon-btn danger" title="Remove resume">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Form -->
+    <main id="mainArea">
+      <div class="input-group">
+        <label for="jobDescription">Job Description <span class="required">*</span></label>
+        <textarea id="jobDescription" placeholder="Paste the full job description here..." rows="5"></textarea>
+      </div>
+
+      <div class="input-group">
+        <label for="customInstructions">Custom Instructions</label>
+        <textarea id="customInstructions" placeholder='e.g. "Highlight my experience with distributed systems"' rows="2"></textarea>
+      </div>
+
+      <!-- Target Field Name (Optional) -->
+      <div class="input-group">
+        <label for="targetFieldName">Target Field Name <span class="optional">(Optional)</span></label>
+        <input type="text" id="targetFieldName" value="Cover letter" placeholder='e.g. "Cover letter" or "Additional attachments"' class="text-input" />
+      </div>
+
+      <!-- Auto-Paste Toggle -->
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <span class="toggle-label">Auto-paste / Auto-attach</span>
+          <span class="toggle-desc">Attach PDF or paste text into active page</span>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="autoPasteToggle" checked>
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+      <!-- Error Alert -->
+      <div id="errorAlert" class="alert alert-error hidden"></div>
+
+      <button id="generateBtn" class="btn-primary">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
+        </svg>
+        <span>Generate Cover Letter</span>
+      </button>
+    </main>
+
+    <!-- Loading State -->
+    <div id="loadingArea" class="hidden state-view">
+      <div class="loader">
+        <div class="loader-ring"></div>
+        <div class="loader-ring"></div>
+        <div class="loader-ring"></div>
+      </div>
+      <p class="loader-text">Crafting your cover letter...</p>
+    </div>
+
+    <!-- Success State -->
+    <div id="successArea" class="hidden state-view">
+      <div class="alert alert-success">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+        <span>Cover letter generated!</span>
+      </div>
+
+      <div id="autoPasteStatus" class="alert alert-info hidden">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+        <span id="autoPasteMessage">Pasted to page</span>
+      </div>
+
+      <div class="preview-container">
+        <div class="preview-header">
+          <span>Preview</span>
+        </div>
+        <div id="resultPreview" class="preview-body"></div>
+      </div>
+
+      <div class="action-row">
+        <button id="downloadPdfBtn" class="btn-secondary">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          Download PDF
+        </button>
+        <button id="copyBtn" class="btn-secondary">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+          </svg>
+          <span id="copyBtnText">Copy Text</span>
+        </button>
+      </div>
+      <button id="resetBtn" class="btn-ghost">← Start Over</button>
+    </div>
+
+  </div>
+
+  <!-- Scripts -->
+  <script src="lib/pdf.min.js"></script>
+  <script src="lib/jspdf.umd.min.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>
