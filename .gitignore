@@ -32,3 +32,4 @@ backend/.env
 ehthumbs.db
 Thumbs.db
 *.zip
+original_icon.png
