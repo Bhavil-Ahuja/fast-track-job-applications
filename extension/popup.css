@@ -487,3 +487,53 @@ textarea:focus, .text-input:focus {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--text-muted);
 }
+
+/* ---- API Key Settings UI ---- */
+.section-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.helper-link {
+  font-size: 11px;
+  color: #818cf8;
+  text-decoration: none;
+  font-weight: 500;
+}
+.helper-link:hover {
+  text-decoration: underline;
+}
+.password-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.password-input-wrapper input {
+  padding-right: 36px;
+}
+.toggle-visibility {
+  position: absolute;
+  right: 8px;
+  background: transparent;
+  color: var(--text-muted);
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+}
+.toggle-visibility:hover {
+  color: var(--text-primary);
+}
+.api-actions {
+  margin-top: 8px;
+}
+.btn-sm {
+  padding: 6px 12px;
+  font-size: 12px;
+}
+.status-msg {
+  font-size: 12px;
+  margin-top: 8px;
+  font-weight: 500;
+}
+.status-success { color: var(--success); }
+.status-error { color: var(--error); }

@@ -20,6 +20,31 @@
       </div>
     </header>
 
+    <!-- API Settings Card -->
+    <div class="section-card" id="settingsCard">
+      <div class="section-label">
+        Settings
+        <a href="https://aistudio.google.com/app/apikey" target="_blank" class="helper-link">Get your free key</a>
+      </div>
+      <div class="input-group">
+        <label for="geminiApiKey">Gemini API Key <span class="required">*</span></label>
+        <div class="password-input-wrapper">
+          <input type="password" id="geminiApiKey" placeholder="AIzaSy..." class="text-input" />
+          <button id="toggleApiKeyVisibility" class="icon-btn toggle-visibility" title="Show/Hide">
+            <svg class="eye-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+          </button>
+        </div>
+        <div class="action-row api-actions">
+          <button id="testKeyBtn" class="btn-secondary btn-sm">Test Key</button>
+          <button id="saveKeyBtn" class="btn-secondary btn-sm">Save</button>
+        </div>
+        <div id="apiStatusMessage" class="status-msg hidden"></div>
+      </div>
+    </div>
+
     <!-- Resume Card -->
     <div class="section-card" id="resumeCard">
       <div class="section-label">Resume</div>

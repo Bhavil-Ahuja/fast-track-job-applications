@@ -28,16 +28,25 @@ document.addEventListener('DOMContentLoaded', async () => {
   const autoPasteStatus = document.getElementById('autoPasteStatus');
   const autoPasteMessage = document.getElementById('autoPasteMessage');
 
+  const geminiApiKeyInput = document.getElementById('geminiApiKey');
+  const toggleApiKeyVisibilityBtn = document.getElementById('toggleApiKeyVisibility');
+  const testKeyBtn = document.getElementById('testKeyBtn');
+  const saveKeyBtn = document.getElementById('saveKeyBtn');
+  const apiStatusMessage = document.getElementById('apiStatusMessage');
+
   let cachedResumeText = '';
   let cachedFileName = '';
   let generatedLetter = '';     // Raw text with **bold** markers
   let cleanLetter = '';         // Text stripped of bold markers
+  let userApiKey = '';
 
   const API_URL = 'http://localhost:5000/api/generate';
+  const API_TEST_URL = 'http://localhost:5000/api/test-key';
 
   // ---- Initialize ----
   await loadCachedResume();
   await loadPreferences();
+  await loadApiKey();
 
   // ---- Event Listeners ----
   resumeUpload.addEventListener('change', handleFileUpload);
@@ -49,6 +58,13 @@ document.addEventListener('DOMContentLoaded', async () => {
   resetBtn.addEventListener('click', resetUI);
   autoPasteToggle.addEventListener('change', savePreferences);
   targetFieldNameInput.addEventListener('input', savePreferences);
+
+  toggleApiKeyVisibilityBtn.addEventListener('click', () => {
+    const type = geminiApiKeyInput.getAttribute('type') === 'password' ? 'text' : 'password';
+    geminiApiKeyInput.setAttribute('type', type);
+  });
+  saveKeyBtn.addEventListener('click', saveApiKey);
+  testKeyBtn.addEventListener('click', testApiKey);
 
   // =====================
   //  RESUME MANAGEMENT
@@ -144,6 +160,74 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   // =====================
+  //  API KEY MANAGEMENT
+  // =====================
+
+  async function loadApiKey() {
+    return new Promise((resolve) => {
+      chrome.storage.local.get(['geminiApiKey'], (data) => {
+        if (data.geminiApiKey) {
+          userApiKey = data.geminiApiKey;
+          geminiApiKeyInput.value = userApiKey;
+        }
+        resolve();
+      });
+    });
+  }
+
+  function saveApiKey() {
+    const key = geminiApiKeyInput.value.trim();
+    chrome.storage.local.set({ geminiApiKey: key }, () => {
+      userApiKey = key;
+      setApiStatus('Saved locally!', 'success');
+    });
+  }
+
+  async function testApiKey() {
+    const key = geminiApiKeyInput.value.trim();
+    if (!key) {
+      setApiStatus('Please enter an API key to test.', 'error');
+      return;
+    }
+
+    testKeyBtn.disabled = true;
+    setApiStatus('Testing key...', 'success');
+    apiStatusMessage.style.color = 'var(--text-secondary)';
+
+    try {
+      const response = await fetch(API_TEST_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Gemini-Api-Key': key
+        }
+      });
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        setApiStatus('Valid API Key!', 'success');
+        userApiKey = key;
+        chrome.storage.local.set({ geminiApiKey: key });
+      } else {
+        setApiStatus(data.message || data.error || 'Invalid API Key', 'error');
+      }
+    } catch (err) {
+      setApiStatus('Failed to connect to backend', 'error');
+    } finally {
+      testKeyBtn.disabled = false;
+    }
+  }
+
+  function setApiStatus(message, type) {
+    apiStatusMessage.textContent = message;
+    apiStatusMessage.className = `status-msg status-${type}`;
+    apiStatusMessage.classList.remove('hidden');
+    setTimeout(() => {
+      apiStatusMessage.classList.add('hidden');
+    }, 4000);
+  }
+
+  // =====================
   //  DYNAMIC PDF FILENAME GENERATOR
   // =====================
 
@@ -182,6 +266,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     const jdText = jobDescription.value.trim();
     const customText = customInstructions.value.trim();
 
+    if (!userApiKey) {
+      showError('Please configure your Gemini API Key in the settings above.');
+      return;
+    }
     if (!cachedResumeText) {
       showError('Please upload a resume first.');
       return;
@@ -199,7 +287,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     try {
       const response = await fetch(API_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'X-Gemini-Api-Key': userApiKey
+        },
         body: JSON.stringify({
           resumeText: cachedResumeText,
           jobDescription: jdText,
